@@ -2,5 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+@layer components {
+  .footer_before::before {
+    content: '';
+    width: 1px;
+    height: 8px;
+    top: 50%;
+    left: calc(-11px / 2);
+    transform: translateY(-50%);
+    position: absolute;
+    background-color: #767676;
+  }
+  .winnerNum_before::before {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 9px;
+    height: 9px;
+    left: calc(-23px / 2 - 4.5px - 1.5px);
+    content: '';
+    background-image: url('/images/ico_plus.png');
+    background-size: 9px 9px;
+  }
 }
