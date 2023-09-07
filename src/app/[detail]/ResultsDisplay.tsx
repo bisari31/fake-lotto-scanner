@@ -1,6 +1,7 @@
 interface Props {
   winningNumbers: number[];
 }
+
 export const getBgClassName = (num: number) => {
   if (num >= 1 && num <= 10) return 'bg-clr1';
   else if (num >= 11 && num <= 20) return 'bg-clr2';

@@ -1,11 +1,11 @@
 import { Metadata } from 'next';
+import Image from 'next/image';
 
 import TopBanner from './TopBanner';
 import Header from './Header';
 import Footer from './Footer';
 import ResultsDisplay from './ResultsDisplay';
 import ResultsTable from './ResultsTable';
-import Image from 'next/image';
 
 export const metadata: Metadata = {
   title: '구매복권 당첨결과',
@@ -21,9 +21,10 @@ interface Props {
 }
 
 export default function DetailPage({ searchParams }: Props) {
+  // const { selectedRank } = useAppSelector((state) => state.lotto);
+
   const results = searchParams.data.match(/\d+/g) ?? null;
   if (!results) throw new Error('data is invalid');
-
   const { draw, userPicks } = results.reduce<ReduceRetrunType>(
     (acc, cur, idx) => {
       if (!idx) {
@@ -46,21 +47,26 @@ export default function DetailPage({ searchParams }: Props) {
     { draw: 0, userPicks: [] },
   );
 
-  const getWinningNumbers = (nums: number[][], targetRank: 1 | 2 | 3 | 4) => {
+  const getWinningNumbers = (nums: number[][], targetRank: Rank) => {
     const randomNum = Math.floor(Math.random() * nums.length);
     const shuffle = (array: number[]) => {
       const newArray = [...array];
       return newArray.sort(() => Math.random() - 0.5);
     };
     const shuffledNums = shuffle(nums[randomNum]);
-    return fillRandomNumbers(shuffledNums);
+    return fillRandomNumbers(shuffledNums, targetRank);
   };
 
-  const fillRandomNumbers = (nums: number[]) => {
-    const results = [...nums];
+  const fillRandomNumbers = (nums: number[], targetRank: Rank) => {
+    const calculateNum = (num: Rank) => {
+      const results = [0, 0, 1, 2];
+      return results[num - 1];
+    };
+    const results = nums.slice(calculateNum(targetRank));
     while (results.length !== 7) {
       const random = Math.ceil(Math.random() * 45);
-      if (!results.includes(random)) results.push(random);
+      if (!results.includes(random))
+        targetRank === 2 ? results.unshift(random) : results.push(random);
     }
     return results;
   };
@@ -83,7 +89,7 @@ export default function DetailPage({ searchParams }: Props) {
                   <ResultsTable
                     winningNumbers={winningNumbers}
                     index={idx}
-                    array={array}
+                    numbers={array}
                     key={idx}
                   />
                 ))}
