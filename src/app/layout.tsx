@@ -2,7 +2,8 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
 
-import { Providers } from '@/redux/providers';
+import QueryClientProviders from '@/utils/QueryClientProviders';
+import { ReduxProviders } from '@/redux/ReduxProviders';
 
 const notoSans = Noto_Sans_KR({
   subsets: ['latin'],
@@ -20,12 +21,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <Providers>
-      <html lang="ko">
-        <body className={`${notoSans.className} tracking-[-0.2px]`}>
-          {children}
-        </body>
-      </html>
-    </Providers>
+    <html lang="ko">
+      <body className={`${notoSans.className} tracking-[-0.2px]`}>
+        <ReduxProviders>
+          <QueryClientProviders>{children}</QueryClientProviders>
+        </ReduxProviders>
+      </body>
+    </html>
   );
 }
