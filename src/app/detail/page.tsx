@@ -1,5 +1,4 @@
 'use client';
-import { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
@@ -11,10 +10,6 @@ import Header from './Header';
 import Footer from './Footer';
 import TopBanner from './TopBanner';
 import ResultsDisplay from './ResultsDisplay';
-
-export const metadata: Metadata = {
-  title: '구매복권 당첨결과',
-};
 
 const ResultsTable = dynamic(() => import('./ResultsTable'), {
   ssr: false,
