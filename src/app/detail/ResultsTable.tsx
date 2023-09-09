@@ -14,23 +14,25 @@ export default function ResultsTable({
   winningNumbers,
 }: Props) {
   const checkLottoResult = (numbers: number[], winingNumbers: number[]) => {
+    let rank = 0;
     const matchedNumbers = winningNumbers.filter((winNum) =>
       numbers.find((n) => n === winNum),
     );
     const length = matchedNumbers.length;
-    const hasBonusBall = matchedNumbers.includes(winingNumbers[6]);
+    const hasBonusNum = matchedNumbers.includes(winingNumbers[6]);
 
     if (length === 6) {
-      return !hasBonusBall ? '1등당첨' : '2등당첨';
-    } else if (length === 5 && !hasBonusBall) {
-      return '3등당첨';
-    } else if (length === 4 && !hasBonusBall) {
-      return '4등당첨';
-    } else if (length === 3 && !hasBonusBall) {
-      return '5등당첨';
+      rank = !hasBonusNum ? 1 : 2;
+    } else if (length === 5 && !hasBonusNum) {
+      rank = 3;
+    } else if (length === 4 && !hasBonusNum) {
+      rank = 4;
+    } else if (length === 3 && !hasBonusNum) {
+      rank = 5;
     } else {
-      return '낙첨';
+      rank = 0;
     }
+    return `${rank ? `${rank}등당첨` : '낙첨'}`;
   };
 
   return (

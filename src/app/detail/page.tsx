@@ -1,30 +1,36 @@
+'use client';
 import { Metadata } from 'next';
+import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 
-import TopBanner from './TopBanner';
+import { getRandomInt } from '@/utils';
+import { useAppSelector } from '@/hooks';
+
 import Header from './Header';
 import Footer from './Footer';
+import TopBanner from './TopBanner';
 import ResultsDisplay from './ResultsDisplay';
-import ResultsTable from './ResultsTable';
 
 export const metadata: Metadata = {
   title: '구매복권 당첨결과',
 };
 
+const ResultsTable = dynamic(() => import('./ResultsTable'), {
+  ssr: false,
+});
+
 type ReduceRetrunType = {
   draw: number;
   userPicks: number[][];
 };
+export default function DetailPage() {
+  const { selectedRank } = useAppSelector((state) => state.lotto);
+  const searchParams = useSearchParams();
+  const results = searchParams.get('data')?.match(/\d+/g) ?? null;
 
-interface Props {
-  searchParams: { [data: string]: string };
-}
-
-export default function DetailPage({ searchParams }: Props) {
-  // const { selectedRank } = useAppSelector((state) => state.lotto);
-
-  const results = searchParams.data.match(/\d+/g) ?? null;
   if (!results) throw new Error('data is invalid');
+
   const { draw, userPicks } = results.reduce<ReduceRetrunType>(
     (acc, cur, idx) => {
       if (!idx) {
@@ -48,30 +54,49 @@ export default function DetailPage({ searchParams }: Props) {
   );
 
   const getWinningNumbers = (nums: number[][], targetRank: Rank) => {
-    const randomNum = Math.floor(Math.random() * nums.length);
-    const shuffle = (array: number[]) => {
-      const newArray = [...array];
-      return newArray.sort(() => Math.random() - 0.5);
-    };
-    const shuffledNums = shuffle(nums[randomNum]);
-    return fillRandomNumbers(shuffledNums, targetRank);
-  };
-
-  const fillRandomNumbers = (nums: number[], targetRank: Rank) => {
+    const randomNum = getRandomInt(0, nums.length - 1);
     const calculateNum = (num: Rank) => {
       const results = [0, 0, 1, 2];
       return results[num - 1];
     };
-    const results = nums.slice(calculateNum(targetRank));
-    while (results.length !== 7) {
-      const random = Math.ceil(Math.random() * 45);
-      if (!results.includes(random))
-        targetRank === 2 ? results.unshift(random) : results.push(random);
+    const winningNums = nums[randomNum].slice(calculateNum(targetRank));
+    while (winningNums.length !== 7) {
+      const random = getRandomInt(1, 45);
+      if (!winningNums.includes(random))
+        targetRank === 2
+          ? winningNums.unshift(random)
+          : winningNums.push(random);
     }
-    return results;
+    const bonusNum = winningNums.pop() as number;
+    return [...winningNums.sort((a, b) => a - b), bonusNum];
   };
-  const winningNumbers = getWinningNumbers(userPicks, 1);
 
+  const winningNumbers = getWinningNumbers(userPicks, selectedRank);
+
+  const getTotalPrize = (picks: number[][], winningNum: number[]) => {
+    const prizes = [2672689750, 46616682, 1289494, 50000, 5000];
+
+    const totalPize = picks.reduce((acc, cur) => {
+      const matched = cur.filter((n) => winningNum.includes(n));
+      const length = matched.length;
+      const hasBonusNum = matched.includes(winningNum[6]);
+      let rank = 0;
+      if (length === 6) {
+        rank = !hasBonusNum ? 1 : 2;
+      } else if (length === 5 && !hasBonusNum) {
+        rank = 3;
+      } else if (length === 4 && !hasBonusNum) {
+        rank = 4;
+      } else if (length === 3 && !hasBonusNum) {
+        rank = 5;
+      } else {
+        rank = 0;
+      }
+      return (acc += rank ? prizes[rank - 1] : 0);
+    }, 0);
+    return totalPize;
+  };
+  const totalPrize = getTotalPrize(userPicks, winningNumbers);
   return (
     <>
       <Header />
@@ -80,7 +105,11 @@ export default function DetailPage({ searchParams }: Props) {
           구매복권 당첨결과
         </div>
         <TopBanner />
-        <ResultsDisplay winningNumbers={winningNumbers} />
+        <ResultsDisplay
+          totalPrize={totalPrize}
+          draw={draw}
+          winningNumbers={winningNumbers}
+        />
         <div className="p-[17px]">
           <div className="pb-[13px]">
             <table className="w-full border border-[#dbdbdb] text-[11px]">
@@ -101,10 +130,7 @@ export default function DetailPage({ searchParams }: Props) {
             당첨금은 실물 복권소지자에게 지급합니다.
           </p>
         </div>
-        <button
-          type="button"
-          className="flex w-screen max-w-full items-center bg-[#f5f5f5] px-[33px] py-[17px]"
-        >
+        <div className="flex w-screen max-w-full items-center bg-[#f5f5f5] px-[33px] py-[17px]">
           <Image
             src="/images/img_app.png"
             width={53}
@@ -112,10 +138,13 @@ export default function DetailPage({ searchParams }: Props) {
             alt="img_app"
           />
           <div className="pl-[19px] text-left text-[11px] font-medium text-[#444]">
-            <p>동행복권 앱 다운받고</p>
-            <p>복권정보와 다양한 알림서비스를 받아보세요.</p>
+            <p>
+              동행복권 앱 다운받고
+              <br />
+              복권정보와 다양한 알림서비스를 받아보세요.
+            </p>
           </div>
-        </button>
+        </div>
       </section>
       <Footer />
     </>

@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import FooterHelp from './FooterHelp';
 
 export default function Footer() {
@@ -25,31 +24,19 @@ export default function Footer() {
         </div>
       </div>
       <div className="flex justify-center pt-[15px] text-[10px]">
-        <Link
-          className="mx-[2px] box-content inline-block h-[25px] w-[82px] border border-[#ddd] px-[10px] text-center leading-[25px]"
-          href="https://m.dhlottery.co.kr/user.do?method=loginm"
-        >
+        <button className="mx-[2px] box-content inline-block h-[25px] w-[82px] border border-[#ddd] px-[10px] text-center leading-[25px]">
           로그인
-        </Link>
-        <Link
-          className="mx-[2px] box-content inline-block h-[25px] w-[82px] border border-[#ddd] px-[10px] text-center leading-[25px]"
-          href="https://m.dhlottery.co.kr/counsel.do?method=callCenter"
-        >
+        </button>
+        <button className="mx-[2px] box-content inline-block h-[25px] w-[82px] border border-[#ddd] px-[10px] text-center leading-[25px]">
           고객센터
-        </Link>
+        </button>
       </div>
       <ul className="flex items-center justify-center pt-[13px] text-[11px] text-[#767676]">
         <li>
-          <strong className="font-bold">
-            <Link href="https://m.dhlottery.co.kr/clause.do?method=footerPrivate">
-              개인정보처리방침
-            </Link>
-          </strong>
+          <button className="font-bold">개인정보처리방침</button>
         </li>
         <li className="footer_before relative ml-3">
-          <Link href="https://m.dhlottery.co.kr/clause.do?method=mobileUseClause">
-            이용약관
-          </Link>
+          <button>이용약관</button>
         </li>
       </ul>
     </footer>
