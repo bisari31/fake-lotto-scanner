@@ -2,26 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+@layer components {
+  .footer_before::before {
+    content: '';
+    width: 1px;
+    height: 8px;
+    top: 50%;
+    left: calc(-11px / 2);
+    transform: translateY(-50%);
+    position: absolute;
+    background-color: #767676;
   }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  .winnerNum_before::before {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 9px;
+    height: 9px;
+    left: calc(-23px / 2 - 4.5px - 1.5px);
+    content: '';
+    background-image: url('/images/ico_plus.png');
+    background-size: 9px 9px;
+  }
+  .bg-button {
+    color: #a86400;
+    /* background: rgb(247, 234, 102); */
+    background: linear-gradient(
+      184deg,
+      rgba(247, 234, 102, 1) 0%,
+      rgba(232, 181, 10, 1) 100%
+    );
+  }
+  .bg-main {
+    background: radial-gradient(
+      circle,
+      rgba(0, 113, 211, 1) 0%,
+      rgba(1, 183, 249, 1) 78%
+    );
+  }
 }
