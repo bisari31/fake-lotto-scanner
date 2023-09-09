@@ -24,4 +24,20 @@
     background-image: url('/images/ico_plus.png');
     background-size: 9px 9px;
   }
+  .bg-button {
+    color: #a86400;
+    /* background: rgb(247, 234, 102); */
+    background: linear-gradient(
+      184deg,
+      rgba(247, 234, 102, 1) 0%,
+      rgba(232, 181, 10, 1) 100%
+    );
+  }
+  .bg-main {
+    background: radial-gradient(
+      circle,
+      rgba(0, 113, 211, 1) 0%,
+      rgba(1, 183, 249, 1) 78%
+    );
+  }
 }

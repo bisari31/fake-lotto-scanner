@@ -7,7 +7,7 @@ import { ReduxProviders } from '@/redux/ReduxProviders';
 
 const notoSans = Noto_Sans_KR({
   subsets: ['latin'],
-  weight: ['400', '500', '700'],
+  weight: ['400', '500', '700', '900'],
 });
 
 export const metadata: Metadata = {

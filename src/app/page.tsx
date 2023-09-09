@@ -1,42 +1,44 @@
 'use client';
 
-import { QrReader } from 'react-qr-reader';
-import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
+import SettingModal from './SettingModal';
 
 export default function Home() {
-  const [data, setData] = useState('');
+  const [isSettingOpen, setIsSettingOpen] = useState(false);
   const router = useRouter();
-  return (
-    <div className="min-h-screen bg-black">
-      <QrReader
-        videoContainerStyle={{ height: '100vh' }}
-        constraints={{ facingMode: 'environment' }}
-        onResult={(result, error) => {
-          if (!!result) {
-            setData(result.toString());
-          }
 
-          if (!!error) {
-            console.info(error);
-          }
-        }}
-      />
-      {data && (
-        <button
-          onClick={() => router.push(`/detail?data=${data}`)}
-          className="absolute bottom-10 left-1/2 flex w-10/12 -translate-x-1/2 items-center rounded-md bg-white p-3"
-        >
-          <div className="flex-1 text-left">
-            <p className="font-bold">동행복권</p>
-            <p>당첨 결과 확인하기</p>
-            <p className="text-zinc-300">m.dhlottery.co.kr</p>
-          </div>
-          <div className="h-16 w-16 bg-zinc-300 p-4 text-3xl font-bold text-white">
-            D
-          </div>
-        </button>
-      )}
+  return (
+    <div className="bg-main flex min-h-screen  justify-center">
+      <div className="flex w-full max-w-md flex-col justify-center">
+        <div className="relative flex animate-upDown justify-center">
+          <Image
+            src="/images/main-title.png"
+            alt="title"
+            width={348}
+            height={0}
+          />
+        </div>
+        <div className="mt-40 flex flex-col items-center gap-y-8 text-xl text-[#a56604]">
+          <button
+            className="bg-button w-36 rounded-full p-3 font-black shadow-xl"
+            type="button"
+            onClick={() => router.push('/qr')}
+          >
+            QR스캔
+          </button>
+          <button
+            className="bg-button w-36 rounded-full p-3  font-black shadow-xl "
+            type="button"
+            onClick={() => setIsSettingOpen(true)}
+          >
+            환경설정
+          </button>
+        </div>
+        {isSettingOpen && <SettingModal setIsSettingOpen={setIsSettingOpen} />}
+      </div>
     </div>
   );
 }

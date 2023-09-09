@@ -8,6 +8,14 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      animation: { upDown: 'upDown 2s ease-in-out infinite' },
+      keyframes: {
+        upDown: {
+          '0%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-5px)' },
+          '100%': { transform: 'translateY(0)' },
+        },
+      },
       colors: {
         clr1: '#e4a816',
         clr2: '#1994da',
