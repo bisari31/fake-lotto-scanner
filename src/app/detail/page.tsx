@@ -32,9 +32,7 @@ export default function DetailPage() {
         acc.draw = +cur;
       } else {
         let newNums = '';
-        if (results.length === idx + 1) {
-          newNums = cur.slice(0, 12);
-        }
+        if (results.length === idx + 1) newNums = cur.slice(0, 12);
         const target = newNums || cur;
         let newArr = [];
         for (let i = 0; i < target.length; i += 2) {
@@ -71,27 +69,33 @@ export default function DetailPage() {
   const getTotalPrize = (picks: number[][], winningNum: number[]) => {
     const prizes = [2672689750, 46616682, 1289494, 50000, 5000];
 
-    const totalPize = picks.reduce((acc, cur) => {
-      const matched = cur.filter((n) => winningNum.includes(n));
-      const length = matched.length;
-      const hasBonusNum = matched.includes(winningNum[6]);
-      let rank = 0;
-      if (length === 6) {
-        rank = !hasBonusNum ? 1 : 2;
-      } else if (length === 5 && !hasBonusNum) {
-        rank = 3;
-      } else if (length === 4 && !hasBonusNum) {
-        rank = 4;
-      } else if (length === 3 && !hasBonusNum) {
-        rank = 5;
-      } else {
-        rank = 0;
-      }
-      return (acc += rank ? prizes[rank - 1] : 0);
-    }, 0);
-    return totalPize;
+    return picks.reduce<{ totalPrize: number; rankings: number[] }>(
+      (acc, cur) => {
+        let ranking = 0;
+        const matched = cur.filter((n) => winningNum.includes(n));
+        const length = matched.length;
+        const hasBonusNum = matched.includes(winningNum[6]);
+        if (length === 6) {
+          ranking = !hasBonusNum ? 1 : 2;
+        } else if (length === 5 && !hasBonusNum) {
+          ranking = 3;
+        } else if (length === 4 && !hasBonusNum) {
+          ranking = 4;
+        } else if (length === 3 && !hasBonusNum) {
+          ranking = 5;
+        } else {
+          ranking = 0;
+        }
+        acc.totalPrize += ranking ? prizes[ranking - 1] : 0;
+        acc.rankings.push(ranking);
+        return acc;
+      },
+      { totalPrize: 0, rankings: [] },
+    );
   };
-  const totalPrize = getTotalPrize(userPicks, winningNumbers);
+
+  const { rankings, totalPrize } = getTotalPrize(userPicks, winningNumbers);
+
   return (
     <>
       <Header />
@@ -111,6 +115,7 @@ export default function DetailPage() {
               <tbody className="">
                 {userPicks.map((array, idx) => (
                   <ResultsTable
+                    ranking={rankings[idx]}
                     winningNumbers={winningNumbers}
                     index={idx}
                     numbers={array}
